@@ -64,7 +64,7 @@
 					},
 					"discordrp.details": {
 						"type": "string",
-						"default": "Editing {filename}",
+						"default": "Editing {file}",
 						"description": "Custom string for the details section of the Rich Presence."
 					},
 					"discordrp.detailsIdle": {

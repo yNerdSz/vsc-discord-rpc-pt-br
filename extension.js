@@ -1,34 +1,33 @@
-const { Client } = require("discord-rpc");
-const path = require("path");
-const timers = require("timers");
+const { Client } = require("discord-client");
+const { extname, basename } = require("path");
 const { workspace, commands, window, StatusBarAlignment } = require("vscode");
 
 const languages = require("./languages");
 
-let rpc, reconnect, reconnectAttempts, config, lastKnownFileName;
+let client, config;
 
 function activate(context) {
     config = workspace.getConfiguration("discordrp");
 
-    if (config.get("enabled")) rpc = new RPC(config.get("clientID"));
+    if (config.get("enabled")) client = new RPC(config.get("clientID"));
 
     context.subscriptions.push(
         commands.registerCommand("discordrp.enable", () => {
-            if (rpc) rpc.destroy();
+            if (client) client.destroy();
 
             config.update("enabled", true);
 
-            rpc = new RPC(config.get("clientID"));
+            client = new RPC(config.get("clientID"));
 
             window.showInformationMessage("Discord Rich Presense is now enabled.");
         }),
         commands.registerCommand("discordrp.disable", () => {
-            if (!rpc) return;
+            if (!client) return;
 
             config.update("enabled", false);
 
-            rpc.clearActivity();
-            rpc.destroy();
+            client.clearActivity();
+            client.destroy();
 
             window.showInformationMessage("Discord Rich Presense is now disabled.");
         })
@@ -36,7 +35,7 @@ function activate(context) {
 }
 
 function deactivate(context) {
-    if (rpc) rpc.destroy();
+    if (client) client.destroy();
 }
 
 exports.activate = activate;
@@ -49,13 +48,15 @@ class RPC extends Client {
         this.eventHandler;
         this.statusBarItem;
 
-        this.once("ready", () => {
-            if (reconnect) {
-                timers.clearInterval(reconnect);
-                reconnect = null;
-            }
+        this.reconnect = null;
+        this.reconnectionAttempts = 0;
 
-            reconnectAttempts = 0;
+        this.lastFile = null;
+
+        this.once("ready", () => {
+            if (this.reconnect) { clearInterval(this.reconnect); this.reconnect = null; }
+
+            this.reconnectionAttempts = 0;
 
             this.setActivity();
             
@@ -71,16 +72,16 @@ class RPC extends Client {
 
                 this.destroy();
 
-                reconnect = timers.setInterval(() => {
-                    reconnectAttempts++;
+                this.reconnect = setInterval(() => {
+                    this.reconnectionAttempts++;
 
-                    rpc = new RPC(config.get("clientID"));
+                    client = new RPC(config.get("clientID"));
                 }, 5000);
             });
         });
 
         this.login(clientID).catch(err => {
-            if (reconnect && reconnectAttempts >= config.get("reconnectThreshold")) this.destroy();
+            if (this.reconnect && this.reconnectionAttempts >= config.get("reconnectThreshold")) this.destroy();
 
             if (err.message.includes("ENOENT")) return window.showErrorMessage("A Discord Client cannot be detected.");
             window.showErrorMessage(`An error occured while trying to connected to Discord via RPC: ${err.message}`);
@@ -88,19 +89,15 @@ class RPC extends Client {
     }
 
     destroy() {
-        if (!rpc) return;
+        client = null;
         
-        if (reconnect) timers.clearInterval(reconnect);
-
-        reconnect = null;
+        if (this.reconnect) clearInterval(this.reconnect);
 
         this.eventHandler.dispose();
 
         this.statusBarItem.dispose();
-
-        rpc = null;
         
-        lastKnownFileName = null;
+        this.lastFile = null;
 
         super.destroy();
     }
@@ -110,26 +107,23 @@ class RPC extends Client {
     }
 
     setActivity() {
-        if (!rpc) return;
-        if (window.activeTextEditor && window.activeTextEditor.document.fileName === lastKnownFileName) return;
+        if (window.activeTextEditor && window.activeTextEditor.document.fileName === this.lastFile) return;
 
-        let activity;
+        let data;
 
         if (window.activeTextEditor) {
-            lastKnownFileName = window.activeTextEditor.document.fileName;
+            this.lastFile = window.activeTextEditor.document.fileName;
 
-            const details = config.get("details").replace("{filename}", path.basename(window.activeTextEditor.document.fileName));
+            const details = config.get("details").replace("{file}", basename(window.activeTextEditor.document.fileName));
 
             const checkState = !!workspace.getWorkspaceFolder(window.activeTextEditor.document.uri);
 
-            const state = checkState ?
-                config.get("workspace").replace("{workspace}", workspace.getWorkspaceFolder(window.activeTextEditor.document.uri).name) :
-                config.get("workspaceNotFound");
+            const state = checkState ? config.get("workspace").replace("{workspace}", workspace.getWorkspaceFolder(window.activeTextEditor.document.uri).name) : config.get("workspaceNotFound");
 
-            const ext = path.extname(path.basename(window.activeTextEditor.document.fileName)).substring(1) || path.basename(window.activeTextEditor.document.fileName).substring(1);
+            const ext = extname(basename(window.activeTextEditor.document.fileName)).substring(1) || basename(window.activeTextEditor.document.fileName).substring(1);
             const lang = this.language(ext) || { "title": "Unsupported Language", "key": "file" };
          
-            activity = {
+            data = {
                 details,
                 state,
                 startTimestamp: Date.now() / 1000,
@@ -144,7 +138,7 @@ class RPC extends Client {
             const checkState = false;
             const state = config.get("workspaceIdle");
 
-            activity = {
+            data = {
                 details,
                 state,
                 startTimestamp: Date.now() / 1000,
@@ -156,7 +150,7 @@ class RPC extends Client {
             };
         }
         
-        super.setActivity(activity);
+        super.setActivity(data);
     }
 
     clearActivity() {
