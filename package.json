@@ -1,20 +1,30 @@
 {
-	"name": "vsc-discord-rpc",
-	"displayName": "VSC Discord Rich Presences",
+    "name": "vsc-discord-rpc",
+    "displayName": "vsc-discord-rpc",
+    "description": "Update your Discord status with a Rich Presence showing your activity.",
 	"version": "0.0.1",
-	"description": "Update your Discord status with a Rich Presence showing your activity.",
-	"author": {
-		"name": "HyperCoder2975",
-		"email": "rethiux@gmail.com"
-	},
-	"publisher": "hypercoder2975",
 	"license": "MIT",
-	"main": "./src/extension",
-	"scripts": {},
-	"activationEvents": [
-		"*"
-	],
-	"contributes": {
+	"publisher": "HyperCoder2975",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc.git"
+	},
+	"bugs": {
+		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc/issues"
+	},
+	"homepage": "https://github.com/HyperCoder2975/vsc-discord-rpc#readme",
+	"icon": "assets/vsc.png",
+    "engines": {
+        "vscode": "^1.18.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./extension",
+    "contributes": {
 		"commands": [
 			{
 				"command": "discord.enable",
@@ -91,22 +101,12 @@
 			}
 		]
 	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc.git"
-	},
-	"bugs": {
-		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc/issues"
-	},
-	"homepage": "https://github.com/HyperCoder2975/vsc-discord-rpc#readme",
-	"icon": "assets/vsc.png",
-	"dependencies": {
-		"discord-rpc": "github:iCrawl/discord-rpc#no-peer-deps"
-	},
-	"devDependencies": {
-		"vscode": "^1.0.0"
-	},
-	"engines": {
-		"vscode": "^1.15.0"
-	}
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "vscode": "^1.1.6",
+        "eslint": "^4.6.1"
+    }
 }
