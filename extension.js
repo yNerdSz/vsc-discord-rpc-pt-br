@@ -1,7 +1,7 @@
 const { Client } = require("discord-rpc");
 const path = require("path");
-const { createInterval, removeInterval } = require("timers");
-const { workspace, commands, window } = require("vscode");
+const timers = require("timers");
+const { workspace, commands, window, StatusBarAlignment } = require("vscode");
 
 const languages = require("./languages");
 
@@ -20,7 +20,7 @@ function activate(context) {
 
             rpc = new RPC(config.get("clientID"));
 
-            window.shotInformationMessage("Discord Rich Presense is now enabled.");
+            window.showInformationMessage("Discord Rich Presense is now enabled.");
         }),
         commands.registerCommand("discordrp.disable", () => {
             if (!rpc) return;
@@ -30,7 +30,7 @@ function activate(context) {
             rpc.clearActivity();
             rpc.destroy();
 
-            window.shotInformationMessage("Discord Rich Presense is now disabled.");
+            window.showInformationMessage("Discord Rich Presense is now disabled.");
         })
     );
 }
@@ -44,28 +44,36 @@ exports.deactivate = deactivate;
 
 class RPC extends Client {
     constructor(clientID) {
+        console.log("New RPC!");
+        
         super({ transport: "ipc" });
 
         this.eventHandler;
+        this.statusBarItem;
 
         this.once("ready", () => {
             if (reconnect) {
-                removeInterval(reconnect);
+                timers.clearInterval(reconnect);
                 reconnect = null;
             }
 
             reconnectAttempts = 0;
 
             this.setActivity();
-
+            
             this.eventHandler = workspace.onDidChangeTextDocument(() => this.setActivity());
+
+            this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
+
+            this.statusBarItem.text = "Discord RP Enabled";
+            this.statusBarItem.show();
             
             this.transport.once("close", () => {
                 if (!config.get("enabled")) return;
 
                 this.destroy();
 
-                reconnect = createInterval(() => {
+                reconnect = timers.setInterval(() => {
                     reconnectAttempts++;
 
                     rpc = new RPC(config.get("clientID"));
@@ -84,17 +92,19 @@ class RPC extends Client {
     destroy() {
         if (!rpc) return;
         
-        if (reconnect) removeInterval(reconnect);
+        if (reconnect) timers.clearInterval(reconnect);
 
         reconnect = null;
 
         this.eventHandler.dispose();
 
-        super.destroy();
+        this.statusBarItem.dispose();
 
         rpc = null;
         
         lastKnownFileName = null;
+
+        super.destroy();
     }
 
     language(ext) {
@@ -152,6 +162,13 @@ class RPC extends Client {
     }
 
     clearActivity() {
-        return super.setActivity({});
+        super.setActivity({});
     }
 }
+
+process
+    .on("uncaughtException", console.error)
+    .on("unhandledRejection", err => {
+        if (!err) return;
+        console.error(`Uncaught Promise Error: \n${err.stack || err}`);
+    });
