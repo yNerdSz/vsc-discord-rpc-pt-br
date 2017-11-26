@@ -1,0 +1,22 @@
+{
+    "js": {
+        "title": "JavaScript",
+        "key": "js"
+    },
+    "html": {
+        "title": "HTML",
+        "key": "html"
+    },
+    "css": {
+        "title": "CSS",
+        "key": "css"
+    },
+    "json": {
+        "title": "JSON",
+        "key": "json"
+    },
+    "ejs": {
+        "title": "EJS",
+        "key": "html"
+    }
+}

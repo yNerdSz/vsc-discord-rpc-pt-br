@@ -1,8 +1,8 @@
 {
-    "name": "vsc-discord-rpc",
-    "displayName": "vsc-discord-rpc",
-    "description": "Update your Discord status with a Rich Presence showing your activity.",
-	"version": "0.0.2",
+	"name": "vsc-discord-rpc",
+	"displayName": "vsc-discord-rpc",
+	"description": "Update your Discord status with a Rich Presence showing your activity.",
+	"version": "0.0.3",
 	"license": "MIT",
 	"publisher": "HyperCoder29750",
 	"repository": {
@@ -14,17 +14,17 @@
 	},
 	"homepage": "https://github.com/HyperCoder2975/vsc-discord-rpc#readme",
 	"icon": "assets/vsc.png",
-    "engines": {
-        "vscode": "^1.18.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./extension",
-    "contributes": {
+	"engines": {
+		"vscode": "^1.18.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./extension",
+	"contributes": {
 		"commands": [
 			{
 				"command": "discord.enable",
@@ -101,15 +101,20 @@
 			}
 		]
 	},
-    "dependencies": {
-        "discord-rpc": "github:iCrawl/discord-rpc#no-peer-deps"
-    },
-    "scripts": {
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
-        "vscode": "^1.1.6",
-        "eslint": "^4.6.1"
-    }
+	"dependencies": {
+		"discord-rpc": "github:iCrawl/discord-rpc#no-peer-deps"
+	},
+	"scripts": {
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"vscode": "^1.1.6",
+		"eslint": "^4.6.1"
+	},
+	"__metadata": {
+		"id": "39e819df-4892-4f58-8329-8ff962202d95",
+		"publisherDisplayName": "HyperCoder",
+		"publisherId": "8d01465d-0d08-4002-8880-c56e65b1e719"
+	}
 }

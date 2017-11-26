@@ -1,144 +1,157 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-
-const discord_rpc = require("discord-rpc");
+const { Client } = require("discord-rpc");
 const path = require("path");
-const timers = require("timers");
-const vscode = require("vscode");
+const { createInterval, removeInterval } = require("timers");
+const { workspace, commands, window } = require("vscode");
 
-let rpc, eventHandler, config, reconnect, reconnectCounter = 0, lastKnownFileName;
+const languages = require("./languages");
+
+let rpc, reconnect, reconnectAttempts, config, lastKnownFileName;
 
 function activate(context) {
-    config = vscode.workspace.getConfiguration('discord');
-    
-    if (config.get('enabled')) initRPC(config.get('clientID'));
+    config = workspace.getConfiguration("discord");
 
-    const enabler = vscode.commands.registerCommand('discord.enable', () => {
-        if (rpc) destroyRPC();
+    if (config.get("enabled")) rpc = new RPC(config.get("clientID"));
 
-        config.update('enabled', true);
+    context.subscriptions.push(
+        commands.registerCommand("discord.enable", () => {
+            if (rpc) rpc.destroy();
 
-        initRPC(config.get('clientID'));
-        
-        vscode.window.showInformationMessage('Enabled Discord Rich Presence for this workspace.');
-    });
-    
-    const disabler = vscode.commands.registerCommand('discord.disable', () => {
-        if (!rpc) return;
+            config.update("enabled", true);
 
-        config.update('enabled', false);
+            rpc = new RPC(config.get("clientID"));
 
-        rpc.setActivity({});
+            window.shotInformationMessage("Discord Rich Presense is now enabled.");
+        }),
+        commands.registerCommand("discord.disable", () => {
+            if (!rpc) return;
 
-        destroyRPC();
-        
-        vscode.window.showInformationMessage('Disabled Discord Rich Presence for this workspace.');
-    });
-    
-    context.subscriptions.push(enabler, disabler);
+            config.update("enabled", false);
+
+            rpc.clearActivity();
+            rpc.destroy();
+
+            window.shotInformationMessage("Discord Rich Presense is now disabled.");
+        })
+    );
 }
 
-function deactivate(context) { destroyRPC(); }
-
-function initRPC(clientID) {
-    rpc = new discord_rpc.Client({ transport: 'ipc' });
-    
-    rpc.once('ready', () => {
-        if (reconnect) {
-            timers.clearInterval(reconnect);
-            reconnect = null;
-        }
-        
-        reconnectCounter = 0;
-
-        setActivity();
-
-        eventHandler = vscode.workspace.onDidChangeTextDocument((e) => setActivity());
-        
-        rpc.transport.once('close', () => {
-            if (!config.get('enabled')) return;
-           
-            destroyRPC();
-            
-            reconnect = timers.setInterval(() => {
-                reconnectCounter++;
-
-                initRPC(config.get('clientID'));
-            }, 5000);
-        });
-    });
-    
-    rpc.login(clientID).catch(error => {
-        if (reconnect) {
-            if (reconnectCounter >= config.get('reconnectThreshold')) destroyRPC();
-            else return;
-        }
-
-        if (error.message.includes('ENOENT')) vscode.window.showErrorMessage('No Discord Client detected!');
-        else vscode.window.showErrorMessage(`Couldn't connect to discord via rpc: ${error.message}`);
-    });
-}
-
-function destroyRPC() {
-    if (!rpc) return;
-    
-    if (reconnect) timers.clearInterval(reconnect);
-    
-    reconnect = null;
-    
-    eventHandler.dispose();
-    
-    rpc.destroy();
-    
-    rpc = null;
-    
-    lastKnownFileName = null;
-}
-
-function language(id, check = false) {
-    const languages = { "javascript": "JavaScript", "html": "HTML", "css": "CSS", "json": "JSON" };
-
-    return check ? !!languages[id] : (languages[id] ? `Working in ${languages[id]}` : "Unsupported Language");
-}
-
-function hasLanguage(ext) { return ["js", "html", "css", "json", "ejs"].includes(ext); }
-
-function setActivity() {
-    if (!rpc) return;
-    if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.fileName === lastKnownFileName) return;
-
-    lastKnownFileName = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.fileName : null;
-
-    const details = vscode.window.activeTextEditor
-        ? config.get('details').replace('{filename}', path.basename(vscode.window.activeTextEditor.document.fileName))
-        : config.get('detailsIdle');
-    const checkState = vscode.window.activeTextEditor
-        ? Boolean(vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri))
-        : false;
-    const state = vscode.window.activeTextEditor
-        ? checkState
-            ? config.get('workspace').replace('{workspace}', vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri).name)
-            : config.get('workspaceNotFound')
-        : config.get('workspaceIdle');
-    
-    const largeImageText = vscode.window.activeTextEditor ? config.get('largeImage') || language(vscode.window.activeTextEditor.document.languageId) : config.get('largeImageIdle');
-   
-    const ext = vscode.window.activeTextEditor ? path.extname(path.basename(vscode.window.activeTextEditor.document.fileName)).substring(1) || path.basename(vscode.window.activeTextEditor.document.fileName).substring(1) : null;
-    const largeImageKey = vscode.window.activeTextEditor ? hasLanguage(ext) ? ext : "file" : "vsc-large";
-
-    const activity = {
-        details,
-        state,
-        startTimestamp: Date.now() / 1000,
-        largeImageKey,
-        largeImageText,
-        smallImageKey: 'vsc',
-        smallImageText: config.get('smallImage'),
-        instance: false
-    };
-    
-    rpc.setActivity(activity);
+function deactivate(context) {
+    if (rpc) rpc.destroy();
 }
 
 exports.activate = activate;
 exports.deactivate = deactivate;
+
+class RPC extends Client {
+    constructor(clientID) {
+        super({ transport: "ipc" });
+
+        this.eventHandler;
+
+        this.once("ready", () => {
+            if (reconnect) {
+                removeInterval(reconnect);
+                reconnect = null;
+            }
+
+            reconnectAttempts = 0;
+
+            this.setActivity();
+
+            this.eventHandler = workspace.onDidChangeTextDocument(() => this.setActivity());
+            
+            this.transport.once("close", () => {
+                if (!config.get("enabled")) return;
+
+                this.destroy();
+
+                reconnect = createInterval(() => {
+                    reconnectAttempts++;
+
+                    rpc = new RPC(config.get("clientID"));
+                }, 5000);
+            });
+        });
+
+        this.login(clientID).catch(err => {
+            if (reconnect && reconnectAttempts >= config.get('reconnectThreshold')) this.destroy();
+
+            if (err.message.includes('ENOENT')) return window.showErrorMessage('A Discord Client cannot be detected.');
+            window.showErrorMessage(`An error occured while trying to connected to Discord via RPC: ${err.message}`);
+        });
+    }
+
+    destroy() {
+        if (!rpc) return;
+        
+        if (reconnect) removeInterval(reconnect);
+
+        reconnect = null;
+
+        this.eventHandler.dispose();
+
+        super.destroy();
+
+        rpc = null;
+        
+        lastKnownFileName = null;
+    }
+
+    language(ext) {
+        return languages[ext];
+    }
+
+    setActivity() {
+        if (!rpc) return;
+        if (window.activeTextEditor && window.activeTextEditor.document.fileName === lastKnownFileName) return;
+
+        let activity;
+
+        if (window.activeTextEditor) {
+            lastKnownFileName = window.activeTextEditor.document.fileName;
+
+            const details = config.get('details').replace('{filename}', path.basename(window.activeTextEditor.document.fileName));
+
+            const checkState = !!workspace.getWorkspaceFolder(window.activeTextEditor.document.uri);
+
+            const state = checkState ?
+                config.get('workspace').replace('{workspace}', workspace.getWorkspaceFolder(window.activeTextEditor.document.uri).name) :
+                config.get('workspaceNotFound');
+
+            const ext = path.extname(path.basename(window.activeTextEditor.document.fileName)).substring(1) || path.basename(window.activeTextEditor.document.fileName).substring(1);
+            const lang = this.language(ext) || { "title": "Unsupported Language", "key": "file" };
+         
+            activity = {
+                details,
+                state,
+                startTimestamp: Date.now() / 1000,
+                largeImageKey: lang.key,
+                largeImageText: lang.title,
+                smallImageKey: 'vsc',
+                smallImageText: config.get('smallImage'),
+                instance: false
+            };
+        } else {
+            const details = config.get("detailsIdle");
+            const checkState = false;
+            const state = config.get("workspaceIdle");
+
+            activity = {
+                details,
+                state,
+                startTimestamp: Date.now() / 1000,
+                largeImageKey: "vsc-large",
+                largeImageText: "Visual Studio Code",
+                smallImageKey: 'vsc',
+                smallImageText: config.get('smallImage'),
+                instance: false
+            };
+        }
+        
+        super.setActivity(activity);
+    }
+
+    clearActivity() {
+        return super.setActivity({});
+    }
+}
