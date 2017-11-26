@@ -1,6 +1,6 @@
 {
 	"name": "vsc-discord-rpc",
-	"displayName": "vsc-discord-rpc",
+	"displayName": "VSCode Discord RPC",
 	"description": "Update your Discord status with a Rich Presence showing your activity.",
 	"version": "0.1.2",
 	"license": "MIT",
@@ -13,7 +13,7 @@
 		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc/issues"
 	},
 	"homepage": "https://github.com/HyperCoder2975/vsc-discord-rpc#readme",
-	"icon": "assets/vsc.png",
+	"icon": "assets/vsc-large.png",
 	"engines": {
 		"vscode": "^1.18.0"
 	},
