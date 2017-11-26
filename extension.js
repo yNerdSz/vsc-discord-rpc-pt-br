@@ -163,10 +163,3 @@ class RPC extends Client {
         super.setActivity({});
     }
 }
-
-process
-    .on("uncaughtException", console.error)
-    .on("unhandledRejection", err => {
-        if (!err) return;
-        console.error(`Uncaught Promise Error: \n${err.stack || err}`);
-    });
