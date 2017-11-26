@@ -1,4 +1,4 @@
-const { Client } = require("discord-client");
+const { Client } = require("discord-rpc");
 const { extname, basename } = require("path");
 const { workspace, commands, window, StatusBarAlignment } = require("vscode");
 
