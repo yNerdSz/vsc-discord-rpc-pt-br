@@ -42,6 +42,11 @@
 				"title": "Discord Rich Presence Configuration",
 				"type": "object",
 				"properties": {
+					"discordrp.statusBarText": {
+						"type": "string",
+						"default": "Discord RP Enabled",
+						"description": "Text to show on status bar."
+					},
 					"discordrp.clientID": {
 						"type": "string",
 						"default": "384116429902970903",
