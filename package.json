@@ -2,7 +2,7 @@
 	"name": "vsc-discord-rpc",
 	"displayName": "vsc-discord-rpc",
 	"description": "Update your Discord status with a Rich Presence showing your activity.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"license": "MIT",
 	"publisher": "HyperCoder29750",
 	"repository": {
@@ -29,12 +29,12 @@
 			{
 				"command": "discordrp.enable",
 				"title": "Enable Discord Presence in the current workspace.",
-				"category": "VS-Discord"
+				"category": "Discord Rich Presence"
 			},
 			{
 				"command": "discordrp.disable",
 				"title": "Disable Discord Presence in the current workspace.",
-				"category": "VS-Discord"
+				"category": "Discord Rich Presence"
 			}
 		],
 		"configuration": [
