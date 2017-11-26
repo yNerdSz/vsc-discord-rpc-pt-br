@@ -63,7 +63,7 @@ class RPC extends Client {
 
             this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
 
-            this.statusBarItem.text = "Discord RP Enabled";
+            this.statusBarItem.text = config.get("statusBarText");
             this.statusBarItem.show();
             
             this.transport.once("close", () => {
