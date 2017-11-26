@@ -2,7 +2,7 @@
 	"name": "vsc-discord-rpc",
 	"displayName": "VSCode Discord RPC",
 	"description": "Update your Discord status with a Rich Presence showing your activity.",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"license": "MIT",
 	"publisher": "HyperCoder29750",
 	"repository": {
