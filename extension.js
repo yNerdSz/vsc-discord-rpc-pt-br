@@ -101,10 +101,6 @@ class RPC extends Client {
         super.destroy();
     }
 
-    language(ext) {
-        return languages[ext];
-    }
-
     setActivity() {
         if (window.activeTextEditor && window.activeTextEditor.document.fileName === this.lastFile) return;
 
@@ -114,13 +110,11 @@ class RPC extends Client {
             this.lastFile = window.activeTextEditor.document.fileName;
 
             const details = config.get("details").replace("{file}", basename(window.activeTextEditor.document.fileName));
-
             const checkState = !!workspace.getWorkspaceFolder(window.activeTextEditor.document.uri);
-
             const state = checkState ? config.get("workspace").replace("{workspace}", workspace.getWorkspaceFolder(window.activeTextEditor.document.uri).name) : config.get("workspaceNotFound");
 
             const ext = extname(basename(window.activeTextEditor.document.fileName)).substring(1) || basename(window.activeTextEditor.document.fileName).substring(1);
-            const lang = this.language(ext) || { "title": "Unsupported Language", "key": "file" };
+            const lang = languages[ext] || { "title": "Unsupported Language", "key": "file" };
          
             data = {
                 details,
