@@ -1,23 +1,29 @@
 {
     "env": {
-        "browser": false,
-        "commonjs": true,
         "es6": true,
         "node": true
     },
+    "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
+        "ecmaVersion": 2017,
         "sourceType": "module"
     },
     "rules": {
-        "no-const-assign": "warn",
-        "no-this-before-super": "warn",
-        "no-undef": "warn",
-        "no-unreachable": "warn",
-        "no-unused-vars": "warn",
-        "constructor-super": "warn",
-        "valid-typeof": "warn"
+        "no-console": "off",
+        "no-unused-vars": "off",
+        "no-empty": "off",
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": [
+            "error",
+            "windows"
+        ],
+        "semi": [
+            "warn",
+            "always"
+        ],
+        "prefer-const": "warn"
     }
 }
