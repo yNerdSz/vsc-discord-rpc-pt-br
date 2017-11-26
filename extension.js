@@ -126,7 +126,7 @@ class RPC extends Client {
                 state,
                 startTimestamp: Date.now() / 1000,
                 largeImageKey: lang.key,
-                largeImageText: lang.title,
+                largeImageText: config.get("largeImage").replace("{language}", lang.title),
                 smallImageKey: "vsc",
                 smallImageText: config.get("smallImage"),
                 instance: false

@@ -84,7 +84,7 @@
 					},
 					"discordrp.largeImage": {
 						"type": "string",
-						"default": "",
+						"default": "Working in {language}",
 						"description": "Custom string for the largeImageText section of the Rich Presence."
 					},
 					"discordrp.largeImageIdle": {
