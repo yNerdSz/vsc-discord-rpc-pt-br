@@ -26,7 +26,6 @@ function activate(context) {
 
             config.update("enabled", false);
 
-            client.clearActivity();
             client.destroy();
 
             window.showInformationMessage("Discord Rich Presense is now disabled.");
@@ -92,12 +91,12 @@ class RPC extends Client {
         client = null;
         
         if (this.reconnect) clearInterval(this.reconnect);
+        
+        this.clearActivity();
 
         this.eventHandler.dispose();
 
         this.statusBarItem.dispose();
-        
-        this.lastFile = null;
 
         super.destroy();
     }
