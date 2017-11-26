@@ -8,12 +8,12 @@ const languages = require("./languages");
 let rpc, reconnect, reconnectAttempts, config, lastKnownFileName;
 
 function activate(context) {
-    config = workspace.getConfiguration("discord");
+    config = workspace.getConfiguration("discordrp");
 
     if (config.get("enabled")) rpc = new RPC(config.get("clientID"));
 
     context.subscriptions.push(
-        commands.registerCommand("discord.enable", () => {
+        commands.registerCommand("discordrp.enable", () => {
             if (rpc) rpc.destroy();
 
             config.update("enabled", true);
@@ -22,7 +22,7 @@ function activate(context) {
 
             window.shotInformationMessage("Discord Rich Presense is now enabled.");
         }),
-        commands.registerCommand("discord.disable", () => {
+        commands.registerCommand("discordrp.disable", () => {
             if (!rpc) return;
 
             config.update("enabled", false);
@@ -74,9 +74,9 @@ class RPC extends Client {
         });
 
         this.login(clientID).catch(err => {
-            if (reconnect && reconnectAttempts >= config.get('reconnectThreshold')) this.destroy();
+            if (reconnect && reconnectAttempts >= config.get("reconnectThreshold")) this.destroy();
 
-            if (err.message.includes('ENOENT')) return window.showErrorMessage('A Discord Client cannot be detected.');
+            if (err.message.includes("ENOENT")) return window.showErrorMessage("A Discord Client cannot be detected.");
             window.showErrorMessage(`An error occured while trying to connected to Discord via RPC: ${err.message}`);
         });
     }
@@ -110,13 +110,13 @@ class RPC extends Client {
         if (window.activeTextEditor) {
             lastKnownFileName = window.activeTextEditor.document.fileName;
 
-            const details = config.get('details').replace('{filename}', path.basename(window.activeTextEditor.document.fileName));
+            const details = config.get("details").replace("{filename}", path.basename(window.activeTextEditor.document.fileName));
 
             const checkState = !!workspace.getWorkspaceFolder(window.activeTextEditor.document.uri);
 
             const state = checkState ?
-                config.get('workspace').replace('{workspace}', workspace.getWorkspaceFolder(window.activeTextEditor.document.uri).name) :
-                config.get('workspaceNotFound');
+                config.get("workspace").replace("{workspace}", workspace.getWorkspaceFolder(window.activeTextEditor.document.uri).name) :
+                config.get("workspaceNotFound");
 
             const ext = path.extname(path.basename(window.activeTextEditor.document.fileName)).substring(1) || path.basename(window.activeTextEditor.document.fileName).substring(1);
             const lang = this.language(ext) || { "title": "Unsupported Language", "key": "file" };
@@ -127,8 +127,8 @@ class RPC extends Client {
                 startTimestamp: Date.now() / 1000,
                 largeImageKey: lang.key,
                 largeImageText: lang.title,
-                smallImageKey: 'vsc',
-                smallImageText: config.get('smallImage'),
+                smallImageKey: "vsc",
+                smallImageText: config.get("smallImage"),
                 instance: false
             };
         } else {
@@ -141,9 +141,9 @@ class RPC extends Client {
                 state,
                 startTimestamp: Date.now() / 1000,
                 largeImageKey: "vsc-large",
-                largeImageText: "Visual Studio Code",
-                smallImageKey: 'vsc',
-                smallImageText: config.get('smallImage'),
+                largeImageText: config.get("largeImageIdle"),
+                smallImageKey: "vsc",
+                smallImageText: config.get("smallImage"),
                 instance: false
             };
         }

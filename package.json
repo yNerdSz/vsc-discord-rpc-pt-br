@@ -27,72 +27,72 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "discord.enable",
+				"command": "discordrp.enable",
 				"title": "Enable Discord Presence in the current workspace.",
 				"category": "VS-Discord"
 			},
 			{
-				"command": "discord.disable",
+				"command": "discordrp.disable",
 				"title": "Disable Discord Presence in the current workspace.",
 				"category": "VS-Discord"
 			}
 		],
 		"configuration": [
 			{
-				"title": "Discord Presence Configuration",
+				"title": "Discord Rich Presence Configuration",
 				"type": "object",
 				"properties": {
-					"discord.clientID": {
+					"discordrp.clientID": {
 						"type": "string",
 						"default": "384116429902970903",
 						"description": "The Application Client ID to use Rich Presence with."
 					},
-					"discord.enabled": {
+					"discordrp.enabled": {
 						"type": "boolean",
 						"default": true,
-						"description": "Controls if Discord Presence is active."
+						"description": "Controls if Discord Rich Presence is active."
 					},
-					"discord.reconnectThreshold": {
+					"discordrp.reconnectThreshold": {
 						"type": "number",
 						"default": 20,
 						"description": "Decides how often a reconnect attempt should be made before stopping."
 					},
-					"discord.details": {
+					"discordrp.details": {
 						"type": "string",
 						"default": "Editing {filename}",
 						"description": "Custom string for the details section of the Rich Presence."
 					},
-					"discord.detailsIdle": {
+					"discordrp.detailsIdle": {
 						"type": "string",
 						"default": "Visual Studio Code",
 						"description": "Custom string for the details section of the Rich Presence when idling."
 					},
-					"discord.workspace": {
+					"discordrp.workspace": {
 						"type": "string",
 						"default": "Working on {workspace}",
 						"description": "Custom string for the state section of the Rich Presence."
 					},
-					"discord.workspaceIdle": {
+					"discordrp.workspaceIdle": {
 						"type": "string",
 						"default": "Idling",
 						"description": "Custom string for the state section of the Rich Presence when idling."
 					},
-					"discord.workspaceNotFound": {
+					"discordrp.workspaceNotFound": {
 						"type": "string",
-						"default": "something",
+						"default": "Working on something",
 						"description": "Custom string for the state section of the Rich Presence when no workspace is found."
 					},
-					"discord.largeImage": {
+					"discordrp.largeImage": {
 						"type": "string",
 						"default": "",
 						"description": "Custom string for the largeImageText section of the Rich Presence."
 					},
-					"discord.largeImageIdle": {
+					"discordrp.largeImageIdle": {
 						"type": "string",
 						"default": "Visual Studio Code",
 						"description": "Custom string for the largeImageText section of the Rich Presence when idling."
 					},
-					"discord.smallImage": {
+					"discordrp.smallImage": {
 						"type": "string",
 						"default": "Visual Studio Code",
 						"description": "Custom string for the smallImageText section of the Rich Presence."
