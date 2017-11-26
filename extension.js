@@ -114,7 +114,7 @@ class RPC extends Client {
             const state = checkState ? config.get("workspace").replace("{workspace}", workspace.getWorkspaceFolder(window.activeTextEditor.document.uri).name) : config.get("workspaceNotFound");
 
             const ext = extname(basename(window.activeTextEditor.document.fileName)).substring(1) || basename(window.activeTextEditor.document.fileName).substring(1);
-            const lang = languages[ext] || { "title": "Unsupported Language", "key": "file" };
+            const lang = languages[ext] || { "title": ext, "key": "file" };
          
             data = {
                 details,
