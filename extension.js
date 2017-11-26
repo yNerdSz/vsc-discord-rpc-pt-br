@@ -44,8 +44,6 @@ exports.deactivate = deactivate;
 
 class RPC extends Client {
     constructor(clientID) {
-        console.log("New RPC!");
-        
         super({ transport: "ipc" });
 
         this.eventHandler;
