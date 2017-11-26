@@ -1,0 +1,112 @@
+{
+	"name": "vsc-discord-rpc",
+	"displayName": "VSC Discord Rich Presences",
+	"version": "0.0.1",
+	"description": "Update your Discord status with a Rich Presence showing your activity.",
+	"author": {
+		"name": "HyperCoder2975",
+		"email": "rethiux@gmail.com"
+	},
+	"publisher": "hypercoder2975",
+	"license": "MIT",
+	"main": "./src/extension",
+	"scripts": {},
+	"activationEvents": [
+		"*"
+	],
+	"contributes": {
+		"commands": [
+			{
+				"command": "discord.enable",
+				"title": "Enable Discord Presence in the current workspace.",
+				"category": "VS-Discord"
+			},
+			{
+				"command": "discord.disable",
+				"title": "Disable Discord Presence in the current workspace.",
+				"category": "VS-Discord"
+			}
+		],
+		"configuration": [
+			{
+				"title": "Discord Presence Configuration",
+				"type": "object",
+				"properties": {
+					"discord.clientID": {
+						"type": "string",
+						"default": "384116429902970903",
+						"description": "The Application Client ID to use Rich Presence with."
+					},
+					"discord.enabled": {
+						"type": "boolean",
+						"default": true,
+						"description": "Controls if Discord Presence is active."
+					},
+					"discord.reconnectThreshold": {
+						"type": "number",
+						"default": 20,
+						"description": "Decides how often a reconnect attempt should be made before stopping."
+					},
+					"discord.details": {
+						"type": "string",
+						"default": "Editing {filename}",
+						"description": "Custom string for the details section of the Rich Presence."
+					},
+					"discord.detailsIdle": {
+						"type": "string",
+						"default": "Visual Studio Code",
+						"description": "Custom string for the details section of the Rich Presence when idling."
+					},
+					"discord.workspace": {
+						"type": "string",
+						"default": "Working on {workspace}",
+						"description": "Custom string for the state section of the Rich Presence."
+					},
+					"discord.workspaceIdle": {
+						"type": "string",
+						"default": "Idling",
+						"description": "Custom string for the state section of the Rich Presence when idling."
+					},
+					"discord.workspaceNotFound": {
+						"type": "string",
+						"default": "something",
+						"description": "Custom string for the state section of the Rich Presence when no workspace is found."
+					},
+					"discord.largeImage": {
+						"type": "string",
+						"default": "",
+						"description": "Custom string for the largeImageText section of the Rich Presence."
+					},
+					"discord.largeImageIdle": {
+						"type": "string",
+						"default": "Visual Studio Code",
+						"description": "Custom string for the largeImageText section of the Rich Presence when idling."
+					},
+					"discord.smallImage": {
+						"type": "string",
+						"default": "Visual Studio Code",
+						"description": "Custom string for the smallImageText section of the Rich Presence."
+					}
+				}
+			}
+		]
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc.git"
+	},
+	"bugs": {
+		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc/issues"
+	},
+	"homepage": "https://github.com/HyperCoder2975/vsc-discord-rpc#readme",
+	"icon": "assets/vsc.png",
+	"dependencies": {
+		"discord-rpc": "github:iCrawl/discord-rpc#no-peer-deps"
+	},
+	"devDependencies": {
+		"vscode": "^1.0.0"
+	},
+	"engines": {
+		"vscode": "^1.15.0"
+	}
+}
