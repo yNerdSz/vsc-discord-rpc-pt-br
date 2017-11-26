@@ -82,7 +82,7 @@ class RPC extends Client {
         this.login(clientID).catch(err => {
             if (this.reconnect && this.reconnectionAttempts >= config.get("reconnectThreshold")) this.destroy();
 
-            if (err.message.includes("ENOENT")) return window.showErrorMessage("A Discord Client cannot be detected.");
+            if (err.message.includes("ENOENT")) return window.showErrorMessage("A Discord client cannot be detected.");
             window.showErrorMessage(`An error occured while trying to connected to Discord via RPC: ${err.message}`);
         });
     }
