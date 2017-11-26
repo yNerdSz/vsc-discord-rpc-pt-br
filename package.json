@@ -4,7 +4,7 @@
     "description": "Update your Discord status with a Rich Presence showing your activity.",
 	"version": "0.0.1",
 	"license": "MIT",
-	"publisher": "HyperCoder2975",
+	"publisher": "HyperCoder29750",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc.git"
@@ -101,6 +101,9 @@
 			}
 		]
 	},
+    "dependencies": {
+        "discord-rpc": "github:iCrawl/discord-rpc#no-peer-deps"
+    },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "node ./node_modules/vscode/bin/test"
