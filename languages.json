@@ -18,5 +18,9 @@
     "ejs": {
         "title": "EJS",
         "key": "html"
+    },
+    "ruby": {
+        "title": "Ruby",
+        "key": "ruby"
     }
 }
