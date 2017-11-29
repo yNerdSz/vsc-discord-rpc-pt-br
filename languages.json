@@ -26,5 +26,9 @@
     "python": {
         "title": "Python",
         "key": "python"
+    },
+    "php": {
+        "title": "php",
+        "key": "php"
     }
 }
