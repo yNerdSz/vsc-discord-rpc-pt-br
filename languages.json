@@ -19,4 +19,8 @@
         "title": "EJS",
         "key": "html"
     }
+    "php": {
+        "title": "php",
+        "key": "php"
+    }
 }
