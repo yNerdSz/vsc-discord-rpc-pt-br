@@ -19,7 +19,7 @@ function activate(context) {
 
             client = new RPC(config.get("clientID"));
 
-            window.showInformationMessage("Discord Rich Presense is now enabled.");
+            window.showInformationMessage("Discord Rich Presense está agora ativado.");
         }),
         commands.registerCommand("discordrp.disable", () => {
             if (!client) return;
@@ -28,7 +28,7 @@ function activate(context) {
 
             client.destroy();
 
-            window.showInformationMessage("Discord Rich Presense is now disabled.");
+            window.showInformationMessage("Discord Rich Presense está agora desativado.");
         })
     );
 }
@@ -82,8 +82,8 @@ class RPC extends Client {
         this.login(clientID).catch(err => {
             if (this.reconnect && this.reconnectionAttempts >= config.get("reconnectThreshold")) this.destroy();
 
-            if (err.message.includes("ENOENT")) return window.showErrorMessage("A Discord client cannot be detected.");
-            window.showErrorMessage(`An error occured while trying to connected to Discord via RPC: ${err.message}`);
+            if (err.message.includes("ENOENT")) return window.showErrorMessage("Discord não resconheicdo.");
+            window.showErrorMessage(`Ocorreu um erro ao tentar se conectar ao Discord via RPC: ${err.message}`);
         });
     }
 
