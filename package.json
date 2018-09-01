@@ -1,18 +1,18 @@
 {
-	"name": "vsc-discord-rpc",
-	"displayName": "VSCode Discord RPC",
-	"description": "Update your Discord status with a Rich Presence showing your activity.",
+	"name": "vsc-discord-rpc-pt-br",
+	"displayName": "VSCode Discord RPC - PT BR",
+	"description": "Atualize seu status do Discord com Rich Presence mostrando sua atividade.",
 	"version": "0.1.7",
 	"license": "MIT",
-	"publisher": "HyperCoder29750",
+	"publisher": "yNerdSz",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc.git"
+		"url": "https://github.com/yNerdSz/vsc-discord-rpc-pt-br/.git"
 	},
 	"bugs": {
-		"url": "https://github.com/HyperCoder2975/vsc-discord-rpc/issues"
+		"url": "https://github.com/yNerdSz/vsc-discord-rpc-pt-br//issues"
 	},
-	"homepage": "https://github.com/HyperCoder2975/vsc-discord-rpc#readme",
+	"homepage": "https://github.com/yNerdSz/vsc-discord-rpc-pt-br/#readme",
 	"icon": "icons/vsc-large.png",
 	"engines": {
 		"vscode": "^1.18.0"
